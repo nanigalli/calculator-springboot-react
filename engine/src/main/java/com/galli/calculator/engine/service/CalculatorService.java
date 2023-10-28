@@ -1,13 +1,13 @@
 package com.galli.calculator.engine.service;
 
-import com.galli.calculator.engine.exception.EngineIllegalArgumentException;
+import static com.galli.calculator.engine.repository.model.Operator.add;
+
 import com.galli.calculator.engine.repository.ResultRepository;
 import com.galli.calculator.engine.repository.model.Operator;
 import com.galli.calculator.engine.repository.model.Result;
 import com.galli.calculator.engine.service.response.OperationResponse;
 import java.math.BigDecimal;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,34 +15,27 @@ public class CalculatorService {
 
   private final ResultRepository repository;
 
-  @Autowired
   public CalculatorService(ResultRepository repository) {
     this.repository = repository;
   }
 
-  public OperationResponse add(String leftNumber, String rightNumber) {
-    Optional<String> oldResult = getOldResult(leftNumber, rightNumber, Operator.add);
+  public OperationResponse add(BigDecimal leftNumber, BigDecimal rightNumber) {
+    Optional<OperationResponse> oldResult = getOldResult(leftNumber, rightNumber, add);
     if (oldResult.isPresent()) {
-      return new OperationResponse(oldResult.get());
+      return oldResult.get();
     }
 
-    String res;
-    try {
-      res = new BigDecimal(leftNumber).add(new BigDecimal(rightNumber)).toPlainString();
-    } catch (Throwable e) {
-      throw new EngineIllegalArgumentException("At least 1 parameter is not a number", "notANumber",
-          e);
-    }
+    String result = leftNumber.add(rightNumber).toString();
+    repository.save(new Result(leftNumber.toString(), rightNumber.toString(), add, result));
 
-    repository.save(new Result(leftNumber, rightNumber, Operator.add, res));
-
-    return new OperationResponse(res);
+    return new OperationResponse(result);
   }
 
-  protected Optional<String> getOldResult(String leftNumber, String rightNumber,
+  protected Optional<OperationResponse> getOldResult(BigDecimal leftNumber, BigDecimal rightNumber,
       Operator operator) {
-    return repository.findByLeftNumberAndRightNumberAndOperator(leftNumber, rightNumber, operator)
-        .map(Result::getResult);
+    return repository.findByLeftNumberAndRightNumberAndOperator(leftNumber.toString(),
+            rightNumber.toString(), operator)
+        .map(Result::getResult).map(OperationResponse::new);
   }
 
 }

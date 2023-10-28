@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ResultRepository extends JpaRepository<Result, String> {
 
-  Optional<Result> findByLeftNumberAndRightNumberAndOperator(String left, String right, Operator operator);
+  Optional<Result> findByLeftNumberAndRightNumberAndOperator(String left, String right,
+      Operator operator);
 
 }
