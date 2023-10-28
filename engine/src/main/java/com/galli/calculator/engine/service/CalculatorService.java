@@ -5,6 +5,7 @@ import static com.galli.calculator.engine.repository.model.Operator.add;
 import com.galli.calculator.engine.repository.ResultRepository;
 import com.galli.calculator.engine.repository.model.Operator;
 import com.galli.calculator.engine.repository.model.Result;
+import com.galli.calculator.engine.service.response.GetAllResultsResponse;
 import com.galli.calculator.engine.service.response.OperationResponse;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -17,6 +18,10 @@ public class CalculatorService {
 
   public CalculatorService(ResultRepository repository) {
     this.repository = repository;
+  }
+
+  public GetAllResultsResponse getAllResults() {
+    return new GetAllResultsResponse(repository.findAll());
   }
 
   public OperationResponse add(BigDecimal leftNumber, BigDecimal rightNumber) {
