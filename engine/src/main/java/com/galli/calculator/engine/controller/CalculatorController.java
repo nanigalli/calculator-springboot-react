@@ -21,11 +21,11 @@ public class CalculatorController {
   }
 
   @PostMapping("add")
-  public OperationResponse add(@RequestParam String number1, @RequestParam String number2) {
-    return service.add(convert(number1), convert(number2.strip()));
+  public OperationResponse add(@RequestParam String leftNumber, @RequestParam String rightNumber) {
+    return service.add(convert(leftNumber), convert(rightNumber.strip()));
   }
 
-  private BigDecimal convert(String number) {
+  protected BigDecimal convert(String number) {
     try {
       return new BigDecimal(number.strip());
     } catch (NumberFormatException e) {
