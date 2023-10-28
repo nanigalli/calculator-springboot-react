@@ -2,6 +2,8 @@ import Wrapper from "./components/Wrapper";
 import Screen from "./components/Screen";
 import ButtonBox from "./components/ButtonBox";
 import Button from "./components/Button";
+import ScrollableComponent from "./components/ScrollableComponent"
+import CollapseComponent from "./components/CollapseComponent"
 import React, { useState } from "react";
 
 const btnValues = [
@@ -10,6 +12,97 @@ const btnValues = [
   [4, 5, 6, "-"],
   [1, 2, 3, "+"],
   [0, ".", "="],
+];
+
+const oldResultsValues = [
+  "1 - 1 = 0",
+  "4 x 100 = 400",
+  "79.00000000001 / 3.0000000000001 = 26.333333333333333333333333333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "2 - 5 = -3",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "2 - 5 = -3",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "2 - 5 = -3",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "2 - 5 = -3",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "2 - 5 = -3",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "2 - 5 = -3",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "2 - 5 = -3",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105",
+  "1 - 1 = 0",
+  "2 - 5 = -3",
+  "4 x 100 = 400",
+  "79 / 3 = 26.3333333",
+  "14592 x 15 = 21880",
+  "0.345 x 49 = 3.105"
 ];
 
 const toLocaleString = (num) =>
@@ -22,6 +115,7 @@ const App = () => {
     sign: "",
     num: 0,
     res: 0,
+    visibleOldResult: false
   });
 
   //The numClickHandler function gets triggered only if any of the number buttons (0–9) are pressed. Then it gets the value of the Button and adds that to the current num value.
@@ -135,33 +229,45 @@ const App = () => {
     }
   };
 
+  const changeVisibleOldResult = () => {
+    setCalc({
+      ...calc,
+      visibleOldResult: !calc.visibleOldResult,
+    });
+  }
+
   return (
     <Wrapper>
-      <Screen value={calc.num ? calc.num : calc.res} />
-      <ButtonBox>
-        {btnValues.flat().map((btn, i) => {
-          return (
-            <Button
-              key={i}
-              className={btn === "=" ? "equals" : btn === "C" ? "reset": ""}
-              value={btn}
-              onClick={
-                btn === "C"
-                  ? resetClickHandler
-                  : btn === "+-"
-                  ? invertClickHandler
-                  : btn === "="
-                  ? equalsClickHandler
-                  : btn === "/" || btn === "X" || btn === "-" || btn === "+"
-                  ? signClickHandler
-                  : btn === "."
-                  ? commaClickHandler
-                  : numClickHandler
-              }
-            />
-          );
-        })}
-      </ButtonBox>
+      <CollapseComponent isOpened={calc.visibleOldResult}>
+        <ScrollableComponent onClick={changeVisibleOldResult} oldResults={oldResultsValues} />
+      </CollapseComponent>
+      <CollapseComponent isOpened={!calc.visibleOldResult}>
+        <Screen onClick={changeVisibleOldResult} value={calc.num ? calc.num : calc.res} />
+        <ButtonBox>
+          {btnValues.flat().map((btn, i) => {
+            return (
+              <Button
+                key={i}
+                className={btn === "=" ? "equals" : btn === "C" ? "reset": ""}
+                value={btn}
+                onClick={
+                  btn === "C"
+                    ? resetClickHandler
+                    : btn === "+-"
+                    ? invertClickHandler
+                    : btn === "="
+                    ? equalsClickHandler
+                    : btn === "/" || btn === "X" || btn === "-" || btn === "+"
+                    ? signClickHandler
+                    : btn === "."
+                    ? commaClickHandler
+                    : numClickHandler
+                }
+              />
+            );
+          })}
+        </ButtonBox>
+      </CollapseComponent>
     </Wrapper>
   );
 }
