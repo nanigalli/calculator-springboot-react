@@ -1,64 +1,66 @@
 package com.galli.calculator.engine.repository.model;
 
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.UUID;
 
 @Entity
 @Table(name = "result")
 public class Result {
 
   @Id
-  @GeneratedValue
-  private Long id;
+  private String id;
 
-  private String number1;
+  private String leftNumber;
 
-  private String number2;
+  private String rightNumber;
 
-  private Operation operation;
+  private Operator operator;
 
   private String result;
 
-  public Result(String number1, String number2, Operation operation, String result) {
-    this.number1 = number1;
-    this.number2 = number2;
-    this.operation = operation;
+  public Result() {
+  }
+
+  public Result(String leftNumber, String rightNumber, Operator operator, String result) {
+    this.id = UUID.randomUUID().toString();
+    this.leftNumber = leftNumber;
+    this.rightNumber = rightNumber;
+    this.operator = operator;
     this.result = result;
   }
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
-  public String getNumber1() {
-    return number1;
+  public String getLeftNumber() {
+    return leftNumber;
   }
 
-  public void setNumber1(String number1) {
-    this.number1 = number1;
+  public void setLeftNumber(String leftNumber) {
+    this.leftNumber = leftNumber;
   }
 
-  public String getNumber2() {
-    return number2;
+  public String getRightNumber() {
+    return rightNumber;
   }
 
-  public void setNumber2(String number2) {
-    this.number2 = number2;
+  public void setRightNumber(String rightNumber) {
+    this.rightNumber = rightNumber;
   }
 
-  public Operation getOperation() {
-    return operation;
+  public Operator getOperator() {
+    return operator;
   }
 
-  public void setOperation(Operation operation) {
-    this.operation = operation;
+  public void setOperator(Operator operator) {
+    this.operator = operator;
   }
 
   public String getResult() {

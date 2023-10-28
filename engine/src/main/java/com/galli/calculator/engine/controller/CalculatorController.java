@@ -19,7 +19,7 @@ public class CalculatorController {
 
   @PostMapping("add")
   public OperationResponse add(@RequestParam String number1, @RequestParam String number2) {
-    return service.add(number1, number2);
+    return service.add(number1.strip(), number2.strip());
   }
 
 }
