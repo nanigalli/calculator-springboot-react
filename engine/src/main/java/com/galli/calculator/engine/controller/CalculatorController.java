@@ -2,9 +2,11 @@ package com.galli.calculator.engine.controller;
 
 import com.galli.calculator.engine.exception.EngineIllegalArgumentException;
 import com.galli.calculator.engine.service.CalculatorService;
+import com.galli.calculator.engine.service.response.GetAllResultsResponse;
 import com.galli.calculator.engine.service.response.OperationResponse;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +20,11 @@ public class CalculatorController {
 
   public CalculatorController(CalculatorService service) {
     this.service = service;
+  }
+
+  @GetMapping("results")
+  public GetAllResultsResponse getAllResults() {
+    return service.getAllResults();
   }
 
   @PostMapping("add")
