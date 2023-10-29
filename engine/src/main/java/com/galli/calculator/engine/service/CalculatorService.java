@@ -12,6 +12,7 @@ import com.galli.calculator.engine.service.response.OperationResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,15 +31,7 @@ public class CalculatorService {
   }
 
   public OperationResponse add(BigDecimal leftNumber, BigDecimal rightNumber) {
-    Optional<OperationResponse> oldResult = getOldResult(leftNumber, rightNumber, add);
-    if (oldResult.isPresent()) {
-      return oldResult.get();
-    }
-
-    String result = leftNumber.add(rightNumber).toString();
-    repository.save(new Result(leftNumber.toString(), rightNumber.toString(), add, result));
-
-    return new OperationResponse(result);
+    return calculate(leftNumber, rightNumber, add, BigDecimal::add);
   }
 
   public OperationResponse divide(BigDecimal leftNumber, BigDecimal rightNumber) {
@@ -47,23 +40,26 @@ public class CalculatorService {
           "rightNumberIsZero");
     }
 
-    Optional<OperationResponse> oldResult = getOldResult(leftNumber, rightNumber, divide);
+    return calculate(leftNumber, rightNumber, divide, (leftNum, rightNum) ->
+        leftNum.divide(rightNum, SCALE, RoundingMode.HALF_EVEN).stripTrailingZeros());
+  }
+
+  protected OperationResponse calculate(BigDecimal leftNumber, BigDecimal rightNumber,
+      Operator operator, BiFunction<BigDecimal, BigDecimal, BigDecimal> operation) {
+    Optional<OperationResponse> oldResult = repository
+        .findByLeftNumberAndRightNumberAndOperator(leftNumber.toString(), rightNumber.toString(),
+            operator)
+        .map(Result::getResult)
+        .map(OperationResponse::new);
+
     if (oldResult.isPresent()) {
       return oldResult.get();
     }
 
-    String result = leftNumber.divide(rightNumber, SCALE, RoundingMode.HALF_EVEN)
-        .stripTrailingZeros().toString();
-    repository.save(new Result(leftNumber.toString(), rightNumber.toString(), divide, result));
+    String result = operation.apply(leftNumber, rightNumber).toString();
+    repository.save(new Result(leftNumber.toString(), rightNumber.toString(), operator, result));
 
     return new OperationResponse(result);
-  }
-
-  protected Optional<OperationResponse> getOldResult(BigDecimal leftNumber, BigDecimal rightNumber,
-      Operator operator) {
-    return repository.findByLeftNumberAndRightNumberAndOperator(leftNumber.toString(),
-            rightNumber.toString(), operator)
-        .map(Result::getResult).map(OperationResponse::new);
   }
 
 }
