@@ -107,14 +107,27 @@ const App = () => {
   //It will also make sure that:
   // + there’s no effect on repeated calls
   // + users can’t divide with 0
-  const equalsClickHandler = () => {
-    
-    //TODO: In my project, I have to change this method to call my backend app
-    
+  const equalsClickHandler = async () => {
     if (calc.sign && calc.num) {
+      const operationTypes = {
+        "+": "add",
+        "-": "subtract",
+        "/": "divide",
+        "X": "multiply"
+      }
+      const operationName = operationTypes[calc.sign]
+
+      const operationCall = await fetch(`http://localhost:8080/calculator/${operationName}?leftNumber=${calc.res}&rightNumber=${calc.num}`, {
+        method: 'POST'
+      })
+
+      const operationResult = await operationCall.json()
+
+      console.log('operationResult = ', JSON.stringify(operationResult))
+
       const math = (a, b, sign) =>
         sign === "+"
-          ? a + b
+          ? operationResult.result
           : sign === "-"
           ? a - b
           : sign === "X"
