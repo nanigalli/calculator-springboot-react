@@ -1,5 +1,6 @@
 package com.galli.calculator.engine.service;
 
+import static com.galli.calculator.engine.repository.model.Operator.add;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -10,11 +11,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.galli.calculator.engine.repository.ResultRepository;
-import com.galli.calculator.engine.repository.model.Operator;
 import com.galli.calculator.engine.repository.model.Result;
 import com.galli.calculator.engine.service.response.OperationResponse;
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,39 +26,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class CalculatorServiceTest {
 
   @Mock
+  private BiFunction<BigDecimal, BigDecimal, BigDecimal> operation;
+
+  @Mock
   private ResultRepository repository;
 
   @InjectMocks
   private CalculatorService service;
-
-  @Test
-  public void testAddNumbers_errorCheckingOldResults() {
-    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
-        .thenThrow(new RuntimeException("Ups.."));
-
-    try {
-      service.add(new BigDecimal(1), new BigDecimal(2));
-      fail();
-    } catch (RuntimeException e) {
-      verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(),
-          anyString(), any());
-      verify(repository, never()).save(any());
-    }
-  }
-
-  @Test
-  public void testAddNumbers_resultExistsInDatabase() {
-    String expectedResult = "3";
-    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
-        .thenReturn(Optional.of(new Result("1", "2", Operator.add, expectedResult)));
-
-    OperationResponse result = service.add(new BigDecimal(1), new BigDecimal(2));
-
-    assertEquals(expectedResult, result.result());
-    verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
-        any());
-    verify(repository, never()).save(any());
-  }
 
   @Test
   public void testAddNumbers_resultDoesNotExistInDatabase() {
@@ -71,22 +46,6 @@ public class CalculatorServiceTest {
     verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
         any());
     verify(repository, times(1)).save(any());
-  }
-
-  @Test
-  public void testAddNumbers_resultDoesNotExistInDatabase_errorSavingResult() {
-    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
-        .thenReturn(Optional.empty());
-    when(repository.save(any())).thenThrow(new RuntimeException("Ups.."));
-
-    try {
-      service.add(new BigDecimal(1), new BigDecimal(2));
-      fail();
-    } catch (RuntimeException e) {
-      verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(),
-          anyString(), any());
-      verify(repository, times(1)).save(any());
-    }
   }
 
   @Test
@@ -120,6 +79,50 @@ public class CalculatorServiceTest {
   }
 
   @Test
+  public void testSubtractNumbers_resultDoesNotExistInDatabase() {
+    String expectedResult = "3";
+    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
+        .thenReturn(Optional.empty());
+
+    OperationResponse result = service.subtract(new BigDecimal(5), new BigDecimal(2));
+
+    assertEquals(expectedResult, result.result());
+    verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
+        any());
+    verify(repository, times(1)).save(any());
+  }
+
+  @Test
+  public void testSubtractNumbers_resultDoesNotExistInDatabase_bigNumbers() {
+    BigDecimal bigNumber = new BigDecimal(
+        "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
+    String expectedResult = "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110000000000000000000000000000";
+    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
+        .thenReturn(Optional.empty());
+
+    OperationResponse result = service.subtract(bigNumber, new BigDecimal("1111111111111111111111111111"));
+
+    assertEquals(expectedResult, result.result());
+    verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
+        any());
+    verify(repository, times(1)).save(any());
+  }
+
+  @Test
+  public void testSubtractNumbers_resultDoesNotExistInDatabase_negativeNumbers() {
+    String expectedResult = "-2.8";
+    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
+        .thenReturn(Optional.empty());
+
+    OperationResponse result = service.subtract(new BigDecimal("-0.9"), new BigDecimal("1.9"));
+
+    assertEquals(expectedResult, result.result());
+    verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
+        any());
+    verify(repository, times(1)).save(any());
+  }
+
+  @Test
   public void testDivideNumbers_rightNumberEquals0() {
     try {
       service.divide(new BigDecimal(1), new BigDecimal(0));
@@ -141,35 +144,6 @@ public class CalculatorServiceTest {
   }
 
   @Test
-  public void testDivideNumbers_errorCheckingOldResults() {
-    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
-        .thenThrow(new RuntimeException("Ups.."));
-
-    try {
-      service.divide(new BigDecimal(1), new BigDecimal(2));
-      fail();
-    } catch (RuntimeException e) {
-      verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(),
-          anyString(), any());
-      verify(repository, never()).save(any());
-    }
-  }
-
-  @Test
-  public void testDivideNumbers_resultExistsInDatabase() {
-    String expectedResult = "0.5";
-    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
-        .thenReturn(Optional.of(new Result("1", "2", Operator.add, expectedResult)));
-
-    OperationResponse result = service.divide(new BigDecimal(1), new BigDecimal(2));
-
-    assertEquals(expectedResult, result.result());
-    verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
-        any());
-    verify(repository, never()).save(any());
-  }
-
-  @Test
   public void testDivideNumbers_resultDoesNotExistInDatabase() {
     String expectedResult = "0.5";
     when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
@@ -181,22 +155,6 @@ public class CalculatorServiceTest {
     verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
         any());
     verify(repository, times(1)).save(any());
-  }
-
-  @Test
-  public void testDivideNumbers_resultDoesNotExistInDatabase_errorSavingResult() {
-    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
-        .thenReturn(Optional.empty());
-    when(repository.save(any())).thenThrow(new RuntimeException("Ups.."));
-
-    try {
-      service.divide(new BigDecimal(1), new BigDecimal(2));
-      fail();
-    } catch (RuntimeException e) {
-      verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(),
-          anyString(), any());
-      verify(repository, times(1)).save(any());
-    }
   }
 
   @Test
@@ -227,6 +185,73 @@ public class CalculatorServiceTest {
     verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
         any());
     verify(repository, times(1)).save(any());
+  }
+
+  @Test
+  public void testCalculate_errorCheckingOldResults() {
+    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
+        .thenThrow(new RuntimeException("Ups.."));
+
+    try {
+      service.calculate(new BigDecimal(1), new BigDecimal(2), add, operation);
+      fail();
+    } catch (RuntimeException e) {
+      verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(),
+          anyString(), any());
+      verify(operation, never()).apply(any(), any());
+      verify(repository, never()).save(any());
+    }
+  }
+
+  @Test
+  public void testCalculate_resultExistsInDatabase() {
+    String expectedResult = "3";
+    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
+        .thenReturn(Optional.of(new Result("1", "2", add, expectedResult)));
+
+    OperationResponse result = service.calculate(new BigDecimal(1), new BigDecimal(2), add,
+        operation);
+
+    assertEquals(expectedResult, result.result());
+    verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
+        any());
+    verify(operation, never()).apply(any(), any());
+    verify(repository, never()).save(any());
+  }
+
+  @Test
+  public void testCalculate_resultDoesNotExistInDatabase() {
+    String expectedResult = "3";
+    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
+        .thenReturn(Optional.empty());
+    when(operation.apply(any(), any())).thenReturn(new BigDecimal(expectedResult));
+
+    OperationResponse result = service.calculate(new BigDecimal(1), new BigDecimal(2), add,
+        operation);
+
+    assertEquals(expectedResult, result.result());
+    verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
+        any());
+    verify(operation, times(1)).apply(any(), any());
+    verify(repository, times(1)).save(any());
+  }
+
+  @Test
+  public void testCalculate_resultDoesNotExistInDatabase_errorSavingResult() {
+    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
+        .thenReturn(Optional.empty());
+    when(operation.apply(any(), any())).thenReturn(new BigDecimal(3));
+    when(repository.save(any())).thenThrow(new RuntimeException("Ups.."));
+
+    try {
+      service.calculate(new BigDecimal(1), new BigDecimal(2), add, operation);
+      fail();
+    } catch (RuntimeException e) {
+      verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(),
+          anyString(), any());
+      verify(operation, times(1)).apply(any(), any());
+      verify(repository, times(1)).save(any());
+    }
   }
 
 }
