@@ -52,8 +52,8 @@ const App = () => {
           calc.num === 0 && value === "0"
             ? "0"
             : removeSpaces(calc.num) % 1 === 0
-            ? toLocaleString(Number(removeSpaces(calc.num + value)))
-            : toLocaleString(calc.num + value),
+              ? toLocaleString(Number(removeSpaces(calc.num + value)))
+              : toLocaleString(calc.num + value),
         res: !calc.sign ? 0 : calc.res,
       });
     }
@@ -99,7 +99,7 @@ const App = () => {
   const signClickHandler = (e) => {
     e.preventDefault();
     const value = e.target.innerHTML;
-  
+
     setCalc({
       ...calc,
       sign: value,
@@ -126,14 +126,14 @@ const App = () => {
           console.log('There was an error', error);
           alert("There was an unexpected error in the application, please contact support")
         }
-      
+
         if (operationCall?.ok) {
           const operationResult = await operationCall.json()
           console.log('operationResult = ', JSON.stringify(operationResult))
 
           result = operationResult.result
         } else {
-          console.log(`Error -> HTTP Response Code: ${operationCall?.status}`)
+          console.log(`Error executing operation -> HTTP Response Code: ${operationCall?.status}`)
           alert("There was an unexpected error in the application, please contact support")
           result = "Error"
         }
@@ -149,17 +149,29 @@ const App = () => {
 
   const changeVisibleOldResult = async () => {
     if (!calc.visibleOldResult) {
-    const resultsCall = await fetch('/calculator/results',{
-        method: 'GET'
-      })  
-      const resultsData = await resultsCall.json()
-      console.log('Results: ', JSON.stringify(resultsData))
+      let resultsCall
+      try {
+        resultsCall = await fetch('/calculator/results', {
+          method: 'GET'
+        })
+      } catch (error) {
+        console.log('There was an error', error);
+        alert("There was an unexpected error in the application, please contact support")
+      }
 
-      setCalc({
-        ...calc,
-        visibleOldResult: !calc.visibleOldResult,
-        pastResults: resultsData.results
-      });
+      if (resultsCall?.ok) {
+        const resultsData = await resultsCall.json()
+        console.log('Results: ', JSON.stringify(resultsData))
+
+        setCalc({
+          ...calc,
+          visibleOldResult: !calc.visibleOldResult,
+          pastResults: resultsData.results
+        });
+      } else {
+        console.log(`Error getting results -> HTTP Response Code: ${resultsCall?.status}`)
+        alert("There was an unexpected error in the application, please contact support")
+      }
     } else {
       setCalc({
         ...calc,
@@ -180,20 +192,20 @@ const App = () => {
             return (
               <Button
                 key={i}
-                className={btn === "=" ? "equals" : btn === "C" ? "reset": ""}
+                className={btn === "=" ? "equals" : btn === "C" ? "reset" : ""}
                 value={btn}
                 onClick={
                   btn === "C"
                     ? resetClickHandler
                     : btn === "+-"
-                    ? invertClickHandler
-                    : btn === "="
-                    ? equalsClickHandler
-                    : btn === "/" || btn === "x" || btn === "-" || btn === "+"
-                    ? signClickHandler
-                    : btn === "."
-                    ? commaClickHandler
-                    : numClickHandler
+                      ? invertClickHandler
+                      : btn === "="
+                        ? equalsClickHandler
+                        : btn === "/" || btn === "x" || btn === "-" || btn === "+"
+                          ? signClickHandler
+                          : btn === "."
+                            ? commaClickHandler
+                            : numClickHandler
                 }
               />
             );
