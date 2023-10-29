@@ -8,7 +8,7 @@ import React, { useState } from "react";
 
 const btnValues = [
   ["C", "+-", "/"],
-  [7, 8, 9, "X"],
+  [7, 8, 9, "x"],
   [4, 5, 6, "-"],
   [1, 2, 3, "+"],
   [0, ".", "="],
@@ -18,7 +18,7 @@ const operationTypes = {
   "+": "add",
   "-": "subtract",
   "/": "divide",
-  "X": "multiply"
+  "x": "multiply"
 }
 
 const toLocaleString = (num) =>
@@ -182,7 +182,7 @@ const App = () => {
                     ? invertClickHandler
                     : btn === "="
                     ? equalsClickHandler
-                    : btn === "/" || btn === "X" || btn === "-" || btn === "+"
+                    : btn === "/" || btn === "x" || btn === "-" || btn === "+"
                     ? signClickHandler
                     : btn === "."
                     ? commaClickHandler
