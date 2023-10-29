@@ -35,6 +35,12 @@ public class CalculatorController {
     return service.add(convert(leftNumber), convert(rightNumber.strip()));
   }
 
+  @CrossOrigin
+  @PostMapping("divide")
+  public OperationResponse divide(@RequestParam String leftNumber, @RequestParam String rightNumber) {
+    return service.divide(convert(leftNumber), convert(rightNumber.strip()));
+  }
+
   protected BigDecimal convert(String number) {
     try {
       return new BigDecimal(number.strip());
