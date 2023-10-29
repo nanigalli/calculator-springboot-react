@@ -14,6 +14,13 @@ const btnValues = [
   [0, ".", "="],
 ];
 
+const operationTypes = {
+  "+": "add",
+  "-": "subtract",
+  "/": "divide",
+  "X": "multiply"
+}
+
 const toLocaleString = (num) =>
   String(num).replace(/(?<!\..*)(\d)(?=(?:\d{3})+(?:\.|$))/g, "$1 ");
 
@@ -107,32 +114,26 @@ const App = () => {
   //It will also make sure that:
   // + there’s no effect on repeated calls
   // + users can’t divide with 0
-  const equalsClickHandler = () => {
-    
-    //TODO: In my project, I have to change this method to call my backend app
-    
+  const equalsClickHandler = async () => {
     if (calc.sign && calc.num) {
-      const math = (a, b, sign) =>
-        sign === "+"
-          ? a + b
-          : sign === "-"
-          ? a - b
-          : sign === "X"
-          ? a * b
-          : a / b;
+      let result
+      if (calc.num === "0" && calc.sign === "/") {
+        result = "Can't divide by 0"
+      } else {
+        const operationName = operationTypes[calc.sign]
 
+        const operationCall = await fetch(`/calculator/${operationName}?leftNumber=${calc.res}&rightNumber=${calc.num}`, {
+          method: 'POST'
+        })
+
+        const operationResult = await operationCall.json()
+        console.log('operationResult = ', JSON.stringify(operationResult))
+
+        result = operationResult.result
+      }
       setCalc({
         ...calc,
-        res:
-          calc.num === "0" && calc.sign === "/"
-            ? "Can't divide with 0"
-            : toLocaleString(
-                math(
-                  Number(removeSpaces(calc.res)),
-                  Number(removeSpaces(calc.num)),
-                  calc.sign
-                )
-              ),
+        res: result,
         sign: "",
         num: 0,
       });
@@ -141,8 +142,7 @@ const App = () => {
 
   const changeVisibleOldResult = async () => {
     if (!calc.visibleOldResult) {
-    const resultsCall = await fetch(
-      'http://localhost:8080/calculator/results',{
+    const resultsCall = await fetch('/calculator/results',{
         method: 'GET'
       })  
       const resultsData = await resultsCall.json()
