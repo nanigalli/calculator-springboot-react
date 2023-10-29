@@ -1,15 +1,16 @@
 import "./Results.css";
 
+const operationTypes = {
+    "add": "+",
+    "subtract": "-",
+    "divide": "/",
+    "multiply": "x"
+}
+
 const Results = ({ oldResults, onClick }) => {
     let orIdx = 1
     const orItems = oldResults.map(or => {
-        const op = or.operator === "add"
-            ? "+"
-            : or.operator === "divide"
-                ? "/"
-                : or.operator === "subtract"
-                    ? "-"
-                    : "x"
+        const op = operationTypes[or.operator]
         const item = <ul key={orIdx}>{or.leftNumber} {op} {or.rightNumber} = {or.result}</ul>
         orIdx = orIdx + 1
         return item
