@@ -15,29 +15,50 @@ A calculator project built with Spring boot and React.
 - NodeJs 16.X.X
 
 ### Binaries
-1. Download zip: https://drive.google.com/file/d/1Fibr_RH4vnjpDqUmw0hyU3BvHZd9R5-k/view?usp=sharing
+1. Go to release folder:
+   ```
+   cd release
+   ```
 2. Unzip last version:
-   ```unzip release-{lastVersion}.zip```
+   ```
+   unzip calculator-springboot-react.zip
+   ```
 3. In separate terminals
    - Run backend engine:
-      ```java -jar engine-{lastVersion}.jar```
+   
+      ```
+      java -jar engine-{lastVersion}.jar
+     ```
    - Run app:
-   ```npm start```
+     ```
+     npm install http-server 
+     npx http-server build -p 3000 -P "http://localhost:8080"
+     ```
 4. Visit: http://localhost:3000/
 
 ### Manual 
 Compilation, build and execution
 #### Backend
 1. Go to engine folder:
-```cd engine```
+```
+cd engine
+```
 2. Run backend engine:
-```./gradlew clean build bootRun```
+```
+./gradlew clean build bootRun
+```
 
 #### Frontend
 1. Go to app folder:
-```cd app```
+```
+cd app
+```
 2. Install dependencies:
-```npm install --force```
+```
+npm install --force
+```
 3. Run app:
-```npm start```
+```
+npm start
+```
 4. Visit: http://localhost:3000/
