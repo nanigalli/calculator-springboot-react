@@ -123,7 +123,7 @@ const App = () => {
         const operationName = operationTypes[calc.sign]
         let operationCall
         try {
-          operationCall = await fetch(`/calculator/${operationName}?leftNumber=${calc.res}&rightNumber=${calc.num}`, {
+          operationCall = await fetch(`/calculator/${operationName}?leftNumber=${removeSpaces(calc.res)}&rightNumber=${removeSpaces(calc.num)}`, {
             method: 'POST'
           })
         } catch (error) {

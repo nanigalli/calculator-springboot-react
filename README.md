@@ -15,10 +15,9 @@ A calculator project built with Spring boot and React.
 - NodeJs 16.X.X
 
 ### Binaries
-1. Go to release folder:
-   ```cd release```
+1. Download zip: https://drive.google.com/file/d/1Fibr_RH4vnjpDqUmw0hyU3BvHZd9R5-k/view?usp=sharing
 2. Unzip last version:
-   ```unzip calculator-springboot-react-{lastVersion}.zip```
+   ```unzip release-{lastVersion}.zip```
 3. In separate terminals
    - Run backend engine:
       ```java -jar engine-{lastVersion}.jar```
