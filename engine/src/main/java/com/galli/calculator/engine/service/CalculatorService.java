@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CalculatorService {
 
-  private static final int SCALE = 10;
+  private static final int SCALE = 15;
 
   private final ResultRepository repository;
 

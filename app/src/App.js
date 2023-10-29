@@ -135,7 +135,7 @@ const App = () => {
           const operationResult = await operationCall.json()
           console.log('operationResult = ', JSON.stringify(operationResult))
 
-          result = operationResult.result
+          result = toLocaleString(operationResult.result)
         } else {
           console.log(`Error executing operation -> HTTP Response Code: ${operationCall?.status}`)
           alertUnexpectedError()
