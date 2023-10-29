@@ -7,7 +7,7 @@ import CollapseComponent from "./components/CollapseComponent"
 import React, { useState } from "react";
 
 const btnValues = [
-  ["C", "+-", "/"],
+  ["🔎", "C", "+-", "/"],
   [7, 8, 9, "x"],
   [4, 5, 6, "-"],
   [1, 2, 3, "+"],
@@ -196,7 +196,7 @@ const App = () => {
             return (
               <Button
                 key={i}
-                className={btn === "=" ? "equals" : btn === "C" ? "reset" : ""}
+                className={btn === "=" ? "equals" : ""}
                 value={btn}
                 onClick={
                   btn === "C"
@@ -209,7 +209,9 @@ const App = () => {
                           ? signClickHandler
                           : btn === "."
                             ? commaClickHandler
-                            : numClickHandler
+                            : btn === "🔎"
+                              ? changeVisibleOldResult
+                              : numClickHandler
                 }
               />
             );
