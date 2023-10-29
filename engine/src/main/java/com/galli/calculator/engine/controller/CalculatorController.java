@@ -6,6 +6,7 @@ import com.galli.calculator.engine.service.response.GetAllResultsResponse;
 import com.galli.calculator.engine.service.response.OperationResponse;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +23,13 @@ public class CalculatorController {
     this.service = service;
   }
 
+  @CrossOrigin
   @GetMapping("results")
   public GetAllResultsResponse getAllResults() {
     return service.getAllResults();
   }
 
+  @CrossOrigin
   @PostMapping("add")
   public OperationResponse add(@RequestParam String leftNumber, @RequestParam String rightNumber) {
     return service.add(convert(leftNumber), convert(rightNumber.strip()));
