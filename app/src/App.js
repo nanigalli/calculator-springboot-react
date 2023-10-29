@@ -41,7 +41,6 @@ const App = () => {
   // + there are no multiple zeros before the comma
   // + the format will be “0.” if “.” is pressed first
   // + numbers are entered up to 16 integers long
-
   const numClickHandler = (e) => {
     e.preventDefault();
     const value = e.target.innerHTML;
@@ -109,11 +108,8 @@ const App = () => {
     });
   };
 
-  //The equalsClickHandler function calculates the result when the equals button (=) is pressed. The calculation is based on the current num and res value, as well as the sign selected (see the math function).
-  //The returned value is then set as the new res for the further calculations.
-  //It will also make sure that:
-  // + there’s no effect on repeated calls
-  // + users can’t divide with 0
+  //The equalsClickHandler function calculates the result when the equals button (=) is pressed. 
+  //The calculation is based on the current num and res value, as well as the sign selected.
   const equalsClickHandler = async () => {
     if (calc.sign && calc.num) {
       let result
@@ -121,15 +117,26 @@ const App = () => {
         result = "Can't divide by 0"
       } else {
         const operationName = operationTypes[calc.sign]
+        let operationCall
+        try {
+          operationCall = await fetch(`/calculator/${operationName}?leftNumber=${calc.res}&rightNumber=${calc.num}`, {
+            method: 'POST'
+          })
+        } catch (error) {
+          console.log('There was an error', error);
+          alert("There was an unexpected error in the application, please contact support")
+        }
+      
+        if (operationCall?.ok) {
+          const operationResult = await operationCall.json()
+          console.log('operationResult = ', JSON.stringify(operationResult))
 
-        const operationCall = await fetch(`/calculator/${operationName}?leftNumber=${calc.res}&rightNumber=${calc.num}`, {
-          method: 'POST'
-        })
-
-        const operationResult = await operationCall.json()
-        console.log('operationResult = ', JSON.stringify(operationResult))
-
-        result = operationResult.result
+          result = operationResult.result
+        } else {
+          console.log(`Error -> HTTP Response Code: ${operationCall?.status}`)
+          alert("There was an unexpected error in the application, please contact support")
+          result = "Error"
+        }
       }
       setCalc({
         ...calc,
