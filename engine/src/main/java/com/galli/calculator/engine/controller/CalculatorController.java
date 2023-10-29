@@ -42,6 +42,12 @@ public class CalculatorController {
   }
 
   @CrossOrigin
+  @PostMapping("multiply")
+  public OperationResponse multiply(@RequestParam String leftNumber, @RequestParam String rightNumber) {
+    return service.multiply(convert(leftNumber), convert(rightNumber.strip()));
+  }
+
+  @CrossOrigin
   @PostMapping("divide")
   public OperationResponse divide(@RequestParam String leftNumber, @RequestParam String rightNumber) {
     return service.divide(convert(leftNumber), convert(rightNumber.strip()));

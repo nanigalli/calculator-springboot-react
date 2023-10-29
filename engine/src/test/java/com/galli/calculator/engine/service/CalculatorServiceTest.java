@@ -123,6 +123,50 @@ public class CalculatorServiceTest {
   }
 
   @Test
+  public void testMultiplyNumbers_resultDoesNotExistInDatabase() {
+    String expectedResult = "2";
+    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
+        .thenReturn(Optional.empty());
+
+    OperationResponse result = service.multiply(new BigDecimal(1), new BigDecimal(2));
+
+    assertEquals(expectedResult, result.result());
+    verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
+        any());
+    verify(repository, times(1)).save(any());
+  }
+
+  @Test
+  public void testMultiplyNumbers_resultDoesNotExistInDatabase_bigNumbers() {
+    BigDecimal bigNumber = new BigDecimal(
+        "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
+    String expectedResult = "222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222";
+    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
+        .thenReturn(Optional.empty());
+
+    OperationResponse result = service.multiply(bigNumber, new BigDecimal(2));
+
+    assertEquals(expectedResult, result.result());
+    verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
+        any());
+    verify(repository, times(1)).save(any());
+  }
+
+  @Test
+  public void testMultiplyNumbers_resultDoesNotExistInDatabase_negativeNumbers() {
+    String expectedResult = "-1.71";
+    when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
+        .thenReturn(Optional.empty());
+
+    OperationResponse result = service.multiply(new BigDecimal("-0.9"), new BigDecimal("1.9"));
+
+    assertEquals(expectedResult, result.result());
+    verify(repository, times(1)).findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(),
+        any());
+    verify(repository, times(1)).save(any());
+  }
+
+  @Test
   public void testDivideNumbers_rightNumberEquals0() {
     try {
       service.divide(new BigDecimal(1), new BigDecimal(0));
