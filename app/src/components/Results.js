@@ -9,7 +9,7 @@ const Results = ({ oldResults, onClick }) => {
         ? "/"
         : or.operator === "subtract"
         ? "-"
-        : "X"
+        : "x"
         const item = <ul key={orIdx}>{or.leftNumber} {op} {or.rightNumber} = {or.result}</ul>
         orIdx = orIdx + 1
         return item
