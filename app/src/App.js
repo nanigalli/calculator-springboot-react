@@ -35,6 +35,10 @@ const App = () => {
     pastResults: []
   });
 
+  const alertUnexpectedError = () => {
+    alert("There was an unexpected error in the application, please contact support")
+  }
+
   //The numClickHandler function gets triggered only if any of the number buttons (0–9) are pressed. Then it gets the value of the Button and adds that to the current num value.
   //It will also make sure that:
   // + no whole numbers start with zero
@@ -124,7 +128,7 @@ const App = () => {
           })
         } catch (error) {
           console.log('There was an error', error);
-          alert("There was an unexpected error in the application, please contact support")
+          alertUnexpectedError()
         }
 
         if (operationCall?.ok) {
@@ -134,7 +138,7 @@ const App = () => {
           result = operationResult.result
         } else {
           console.log(`Error executing operation -> HTTP Response Code: ${operationCall?.status}`)
-          alert("There was an unexpected error in the application, please contact support")
+          alertUnexpectedError()
           result = "Error"
         }
       }
@@ -156,7 +160,7 @@ const App = () => {
         })
       } catch (error) {
         console.log('There was an error', error);
-        alert("There was an unexpected error in the application, please contact support")
+        alertUnexpectedError()
       }
 
       if (resultsCall?.ok) {
@@ -170,7 +174,7 @@ const App = () => {
         });
       } else {
         console.log(`Error getting results -> HTTP Response Code: ${resultsCall?.status}`)
-        alert("There was an unexpected error in the application, please contact support")
+        alertUnexpectedError()
       }
     } else {
       setCalc({
