@@ -2,6 +2,7 @@ package com.galli.calculator.engine.service;
 
 import static com.galli.calculator.engine.repository.model.Operator.add;
 import static com.galli.calculator.engine.repository.model.Operator.divide;
+import static com.galli.calculator.engine.repository.model.Operator.subtract;
 
 import com.galli.calculator.engine.exception.EngineIllegalArgumentException;
 import com.galli.calculator.engine.repository.ResultRepository;
@@ -32,6 +33,10 @@ public class CalculatorService {
 
   public OperationResponse add(BigDecimal leftNumber, BigDecimal rightNumber) {
     return calculate(leftNumber, rightNumber, add, BigDecimal::add);
+  }
+
+  public OperationResponse subtract(BigDecimal leftNumber, BigDecimal rightNumber) {
+    return calculate(leftNumber, rightNumber, subtract, BigDecimal::subtract);
   }
 
   public OperationResponse divide(BigDecimal leftNumber, BigDecimal rightNumber) {
