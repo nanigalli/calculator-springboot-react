@@ -1,4 +1,4 @@
-import "./ScrollableComponent.css";
+import "./Results.css";
 
 const Results = ({ oldResults, onClick }) => {
     let orIdx = 1
@@ -15,7 +15,7 @@ const Results = ({ oldResults, onClick }) => {
         return item
     })
     return (
-        <div className="scrollableComponent" onClick={onClick}> 
+        <div className="results" onClick={onClick}> 
             <ul>{orItems}</ul>
         </div>
     );
