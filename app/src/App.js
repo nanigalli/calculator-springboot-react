@@ -2,6 +2,8 @@ import Wrapper from "./components/Wrapper";
 import Screen from "./components/Screen";
 import ButtonBox from "./components/ButtonBox";
 import Button from "./components/Button";
+import Results from "./components/Results"
+import CollapseComponent from "./components/CollapseComponent"
 import React, { useState } from "react";
 
 const btnValues = [
@@ -22,6 +24,8 @@ const App = () => {
     sign: "",
     num: 0,
     res: 0,
+    visibleOldResult: false,
+    pastResults: []
   });
 
   //The numClickHandler function gets triggered only if any of the number buttons (0–9) are pressed. Then it gets the value of the Button and adds that to the current num value.
@@ -135,33 +139,60 @@ const App = () => {
     }
   };
 
+  const changeVisibleOldResult = async () => {
+    if (!calc.visibleOldResult) {
+    const resultsCall = await fetch(
+      'http://localhost:8080/calculator/results',{
+        method: 'GET'
+      })  
+      const resultsData = await resultsCall.json()
+      console.log('Results: ', JSON.stringify(resultsData))
+
+      setCalc({
+        ...calc,
+        visibleOldResult: !calc.visibleOldResult,
+        pastResults: resultsData.results
+      });
+    } else {
+      setCalc({
+        ...calc,
+        visibleOldResult: !calc.visibleOldResult
+      });
+    }
+  }
+
   return (
     <Wrapper>
-      <Screen value={calc.num ? calc.num : calc.res} />
-      <ButtonBox>
-        {btnValues.flat().map((btn, i) => {
-          return (
-            <Button
-              key={i}
-              className={btn === "=" ? "equals" : btn === "C" ? "reset": ""}
-              value={btn}
-              onClick={
-                btn === "C"
-                  ? resetClickHandler
-                  : btn === "+-"
-                  ? invertClickHandler
-                  : btn === "="
-                  ? equalsClickHandler
-                  : btn === "/" || btn === "X" || btn === "-" || btn === "+"
-                  ? signClickHandler
-                  : btn === "."
-                  ? commaClickHandler
-                  : numClickHandler
-              }
-            />
-          );
-        })}
-      </ButtonBox>
+      <CollapseComponent isOpened={calc.visibleOldResult}>
+        <Results onClick={changeVisibleOldResult} oldResults={calc.pastResults} />
+      </CollapseComponent>
+      <CollapseComponent isOpened={!calc.visibleOldResult}>
+        <Screen onClick={changeVisibleOldResult} value={calc.num ? calc.num : calc.res} />
+        <ButtonBox>
+          {btnValues.flat().map((btn, i) => {
+            return (
+              <Button
+                key={i}
+                className={btn === "=" ? "equals" : btn === "C" ? "reset": ""}
+                value={btn}
+                onClick={
+                  btn === "C"
+                    ? resetClickHandler
+                    : btn === "+-"
+                    ? invertClickHandler
+                    : btn === "="
+                    ? equalsClickHandler
+                    : btn === "/" || btn === "X" || btn === "-" || btn === "+"
+                    ? signClickHandler
+                    : btn === "."
+                    ? commaClickHandler
+                    : numClickHandler
+                }
+              />
+            );
+          })}
+        </ButtonBox>
+      </CollapseComponent>
     </Wrapper>
   );
 }
