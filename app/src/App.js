@@ -2,7 +2,7 @@ import Wrapper from "./components/Wrapper";
 import Screen from "./components/Screen";
 import ButtonBox from "./components/ButtonBox";
 import Button from "./components/Button";
-import ScrollableComponent from "./components/ScrollableComponent"
+import Results from "./components/Results"
 import CollapseComponent from "./components/CollapseComponent"
 import React, { useState } from "react";
 
@@ -115,7 +115,8 @@ const App = () => {
     sign: "",
     num: 0,
     res: 0,
-    visibleOldResult: false
+    visibleOldResult: false,
+    pastResults: []
   });
 
   //The numClickHandler function gets triggered only if any of the number buttons (0–9) are pressed. Then it gets the value of the Button and adds that to the current num value.
@@ -229,17 +230,24 @@ const App = () => {
     }
   };
 
-  const changeVisibleOldResult = () => {
+  const changeVisibleOldResult = async () => {
+    const resultsCall = await fetch(
+      'http://localhost:8080/calculator/results',{
+        method: 'GET'
+      })  
+      const resultsData = await resultsCall.json()
+      console.log('Results: ', JSON.stringify(resultsData))
     setCalc({
       ...calc,
       visibleOldResult: !calc.visibleOldResult,
+      pastResults: resultsData.results
     });
   }
 
   return (
     <Wrapper>
       <CollapseComponent isOpened={calc.visibleOldResult}>
-        <ScrollableComponent onClick={changeVisibleOldResult} oldResults={oldResultsValues} />
+        <Results onClick={changeVisibleOldResult} oldResults={calc.pastResults} />
       </CollapseComponent>
       <CollapseComponent isOpened={!calc.visibleOldResult}>
         <Screen onClick={changeVisibleOldResult} value={calc.num ? calc.num : calc.res} />
