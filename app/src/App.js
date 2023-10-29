@@ -35,13 +35,16 @@ const App = () => {
     pastResults: []
   });
 
+  const alertUnexpectedError = () => {
+    alert("There was an unexpected error in the application, please contact support")
+  }
+
   //The numClickHandler function gets triggered only if any of the number buttons (0–9) are pressed. Then it gets the value of the Button and adds that to the current num value.
   //It will also make sure that:
   // + no whole numbers start with zero
   // + there are no multiple zeros before the comma
   // + the format will be “0.” if “.” is pressed first
   // + numbers are entered up to 16 integers long
-
   const numClickHandler = (e) => {
     e.preventDefault();
     const value = e.target.innerHTML;
@@ -53,8 +56,8 @@ const App = () => {
           calc.num === 0 && value === "0"
             ? "0"
             : removeSpaces(calc.num) % 1 === 0
-            ? toLocaleString(Number(removeSpaces(calc.num + value)))
-            : toLocaleString(calc.num + value),
+              ? toLocaleString(Number(removeSpaces(calc.num + value)))
+              : toLocaleString(calc.num + value),
         res: !calc.sign ? 0 : calc.res,
       });
     }
@@ -100,7 +103,7 @@ const App = () => {
   const signClickHandler = (e) => {
     e.preventDefault();
     const value = e.target.innerHTML;
-  
+
     setCalc({
       ...calc,
       sign: value,
@@ -109,11 +112,8 @@ const App = () => {
     });
   };
 
-  //The equalsClickHandler function calculates the result when the equals button (=) is pressed. The calculation is based on the current num and res value, as well as the sign selected (see the math function).
-  //The returned value is then set as the new res for the further calculations.
-  //It will also make sure that:
-  // + there’s no effect on repeated calls
-  // + users can’t divide with 0
+  //The equalsClickHandler function calculates the result when the equals button (=) is pressed. 
+  //The calculation is based on the current num and res value, as well as the sign selected.
   const equalsClickHandler = async () => {
     if (calc.sign && calc.num) {
       let result
@@ -121,15 +121,26 @@ const App = () => {
         result = "Can't divide by 0"
       } else {
         const operationName = operationTypes[calc.sign]
+        let operationCall
+        try {
+          operationCall = await fetch(`/calculator/${operationName}?leftNumber=${calc.res}&rightNumber=${calc.num}`, {
+            method: 'POST'
+          })
+        } catch (error) {
+          console.log('There was an error', error);
+          alertUnexpectedError()
+        }
 
-        const operationCall = await fetch(`/calculator/${operationName}?leftNumber=${calc.res}&rightNumber=${calc.num}`, {
-          method: 'POST'
-        })
+        if (operationCall?.ok) {
+          const operationResult = await operationCall.json()
+          console.log('operationResult = ', JSON.stringify(operationResult))
 
-        const operationResult = await operationCall.json()
-        console.log('operationResult = ', JSON.stringify(operationResult))
-
-        result = operationResult.result
+          result = operationResult.result
+        } else {
+          console.log(`Error executing operation -> HTTP Response Code: ${operationCall?.status}`)
+          alertUnexpectedError()
+          result = "Error"
+        }
       }
       setCalc({
         ...calc,
@@ -142,17 +153,29 @@ const App = () => {
 
   const changeVisibleOldResult = async () => {
     if (!calc.visibleOldResult) {
-    const resultsCall = await fetch('/calculator/results',{
-        method: 'GET'
-      })  
-      const resultsData = await resultsCall.json()
-      console.log('Results: ', JSON.stringify(resultsData))
+      let resultsCall
+      try {
+        resultsCall = await fetch('/calculator/results', {
+          method: 'GET'
+        })
+      } catch (error) {
+        console.log('There was an error', error);
+        alertUnexpectedError()
+      }
 
-      setCalc({
-        ...calc,
-        visibleOldResult: !calc.visibleOldResult,
-        pastResults: resultsData.results
-      });
+      if (resultsCall?.ok) {
+        const resultsData = await resultsCall.json()
+        console.log('Results: ', JSON.stringify(resultsData))
+
+        setCalc({
+          ...calc,
+          visibleOldResult: !calc.visibleOldResult,
+          pastResults: resultsData.results
+        });
+      } else {
+        console.log(`Error getting results -> HTTP Response Code: ${resultsCall?.status}`)
+        alertUnexpectedError()
+      }
     } else {
       setCalc({
         ...calc,
@@ -173,20 +196,20 @@ const App = () => {
             return (
               <Button
                 key={i}
-                className={btn === "=" ? "equals" : btn === "C" ? "reset": ""}
+                className={btn === "=" ? "equals" : btn === "C" ? "reset" : ""}
                 value={btn}
                 onClick={
                   btn === "C"
                     ? resetClickHandler
                     : btn === "+-"
-                    ? invertClickHandler
-                    : btn === "="
-                    ? equalsClickHandler
-                    : btn === "/" || btn === "x" || btn === "-" || btn === "+"
-                    ? signClickHandler
-                    : btn === "."
-                    ? commaClickHandler
-                    : numClickHandler
+                      ? invertClickHandler
+                      : btn === "="
+                        ? equalsClickHandler
+                        : btn === "/" || btn === "x" || btn === "-" || btn === "+"
+                          ? signClickHandler
+                          : btn === "."
+                            ? commaClickHandler
+                            : numClickHandler
                 }
               />
             );
