@@ -32,7 +32,8 @@ const App = () => {
     num: 0,
     res: 0,
     visibleOldResult: false,
-    pastResults: []
+    pastResults: [],
+    nextResultsPage: 0
   });
 
   const alertUnexpectedError = () => {
@@ -154,8 +155,9 @@ const App = () => {
   const changeVisibleOldResult = async () => {
     if (!calc.visibleOldResult) {
       let resultsCall
+      console.log('Results page: ', calc.nextResultsPage)
       try {
-        resultsCall = await fetch('/calculator/results', {
+        resultsCall = await fetch(`/calculator/results?pageNumber=${calc.nextResultsPage}&pageSize=10`, {
           method: 'GET'
         })
       } catch (error) {
@@ -170,7 +172,8 @@ const App = () => {
         setCalc({
           ...calc,
           visibleOldResult: !calc.visibleOldResult,
-          pastResults: resultsData.results
+          pastResults: resultsData.results,
+          nextResultsPage: calc.nextResultsPage +1
         });
       } else {
         console.log(`Error getting results -> HTTP Response Code: ${resultsCall?.status}`)
@@ -179,15 +182,44 @@ const App = () => {
     } else {
       setCalc({
         ...calc,
-        visibleOldResult: !calc.visibleOldResult
+        visibleOldResult: !calc.visibleOldResult,
+        nextResultsPage: 0
       });
     }
+  }
+
+  const moreResultsClickHandle = async () => {
+      let resultsCall
+      console.log('Results page: ', calc.nextResultsPage)
+      try {
+        resultsCall = await fetch(`/calculator/results?pageNumber=${calc.nextResultsPage}&pageSize=10`, {
+          method: 'GET'
+        })
+      } catch (error) {
+        console.log('There was an error', error);
+        alertUnexpectedError()
+      }
+
+      if (resultsCall?.ok) {
+        const resultsData = await resultsCall.json()
+        console.log('Results: ', JSON.stringify(resultsData))
+
+        setCalc({
+          ...calc,
+          pastResults: calc.pastResults.concat(resultsData.results),
+          nextResultsPage: calc.nextResultsPage +1
+        });
+      } else {
+        console.log(`Error getting results -> HTTP Response Code: ${resultsCall?.status}`)
+        alertUnexpectedError()
+      }
   }
 
   return (
     <Wrapper>
       <CollapseComponent isOpened={calc.visibleOldResult}>
         <Results onClick={changeVisibleOldResult} oldResults={calc.pastResults} />
+        <Button key="MoreResults" className="moreResults" value="Load more results" onClick = {moreResultsClickHandle} />
       </CollapseComponent>
       <CollapseComponent isOpened={!calc.visibleOldResult}>
         <Screen onClick={changeVisibleOldResult} value={calc.num ? calc.num : calc.res} />
