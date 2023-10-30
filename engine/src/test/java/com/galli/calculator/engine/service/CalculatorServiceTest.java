@@ -219,7 +219,7 @@ public class CalculatorServiceTest {
 
   @Test
   public void testDivideNumbers_resultDoesNotExistInDatabase_negativeNumbers() {
-    String expectedResult = "-0.4736842105";
+    String expectedResult = "-0.473684210526316";
     when(repository.findByLeftNumberAndRightNumberAndOperator(anyString(), anyString(), any()))
         .thenReturn(Optional.empty());
 

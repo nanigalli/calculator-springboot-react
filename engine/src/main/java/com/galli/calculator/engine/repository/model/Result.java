@@ -1,8 +1,10 @@
 package com.galli.calculator.engine.repository.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -20,6 +22,9 @@ public class Result {
 
   private String result;
 
+  @Column(columnDefinition = "TIMESTAMP")
+  private LocalDateTime executionDate;
+
   public Result() {
   }
 
@@ -29,6 +34,7 @@ public class Result {
     this.rightNumber = rightNumber;
     this.operator = operator;
     this.result = result;
+    this.executionDate = LocalDateTime.now();
   }
 
   public String getId() {
@@ -69,6 +75,14 @@ public class Result {
 
   public void setResult(String result) {
     this.result = result;
+  }
+
+  public LocalDateTime getExecutionDate() {
+    return executionDate;
+  }
+
+  public void setExecutionDate(LocalDateTime executionDate) {
+    this.executionDate = executionDate;
   }
 
 }
