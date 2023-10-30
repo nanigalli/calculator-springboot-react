@@ -95,3 +95,6 @@ Settings: check /engine/src/main/resources/application.properties
 Access the H2 Console: Run backend engine and visit http://localhost:8080/h2-console
 
 Default location: /tmp/gallidb
+
+## Tech debts
+- Find a new component to replace "Textfit" from "react-textfit in react App. It is not compatible with React 18
