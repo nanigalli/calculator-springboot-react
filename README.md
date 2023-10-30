@@ -25,7 +25,7 @@ Alternatively, the database file location can be set by specifying the `DATASOUR
 
 You can operate with numbers up to 16 digits.
 
-![MathOperations](https://github.com/nanigalli/calculator-springboot-react/blob/tech-debts/docs/calculator.gif?raw=true)
+![MathOperations](https://github.com/nanigalli/calculator-springboot-react/blob/main/docs/calculator.gif?raw=true)
 
 
 ### Historical calculations
@@ -33,14 +33,14 @@ You can operate with numbers up to 16 digits.
 
 You can click on the calculator screen to view past calculations, and then click the screen again to return to the calculator.
 
-![AllResultsClickScreen](https://github.com/nanigalli/calculator-springboot-react/blob/tech-debts/docs/allResultsScreen.gif?raw=true)
+![AllResultsClickScreen](https://github.com/nanigalli/calculator-springboot-react/blob/main/docs/allResultsScreen.gif?raw=true)
 
 
 **Option 2**
 
 You can also click on the "🔎" button to view past calculations, and then click the screen again to return to the calculator.
 
-![AllResultsClickButton](https://github.com/nanigalli/calculator-springboot-react/blob/tech-debts/docs/allResultsButton.gif?raw=true)
+![AllResultsClickButton](https://github.com/nanigalli/calculator-springboot-react/blob/main/docs/allResultsButton.gif?raw=true)
 
 
 ## Execution
@@ -58,7 +58,11 @@ You can also click on the "🔎" button to view past calculations, and then clic
 ```
    unzip calculator-springboot-react-{lastVersion}.zip
 ```
-3. In separate terminals
+3. Go to calculator-springboot-react-{lastVersion} folder:
+```
+   cd calculator-springboot-react-{lastVersion}
+```
+4. In separate terminals
 - Run backend engine:
 ```
    java -jar engine-{lastVersion}.jar
@@ -72,7 +76,7 @@ You can also click on the "🔎" button to view past calculations, and then clic
    npm install http-server 
    npx http-server build -p 3000 -P "http://localhost:8080"
 ```
-4. Visit: http://localhost:3000/
+5. Visit: http://localhost:3000/
 
 ### Manual 
 Compilation, build and execution
