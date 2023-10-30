@@ -8,26 +8,37 @@ A calculator project built with Spring boot and React.
 - Format larger numbers
 - Display old results
 
-## Usage example
+## Data source
+Database: H2 (file-based storage)
+
+Access the H2 Console: Run backend engine and visit http://localhost:8080/h2-console
+
+Default location: /tmp/gallidb
+
+Alternatively, the database file location can be set by specifying the `DATASOURCE_DIR` environment variable or java parameter:
+- `java -DDATASOURCE_DIR="{DATASOURCE_DIR}" engine-{lastVersion}.jar`
+- `export DATASOURCE_DIR="{DATASOURCE_DIR}" ; java engine-{lastVersion}.jar`
+
+## Demo
 
 ### Mathematical operations
 
-You can enter numbers up to 16 digits (including decimals).
+You can operate with numbers up to 16 digits.
 
 ![MathOperations](https://github.com/nanigalli/calculator-springboot-react/blob/tech-debts/docs/calculator.gif?raw=true)
 
 
-### Show executed operation
+### Historical calculations
 **Option 1**
 
-You can click on the calculator screen to see the operation executed, and then click the results screen to return to the calculator.
+You can click on the calculator screen to view past calculations, and then click the screen again to return to the calculator.
 
 ![AllResultsClickScreen](https://github.com/nanigalli/calculator-springboot-react/blob/tech-debts/docs/allResultsScreen.gif?raw=true)
 
 
 **Option 2**
 
-You can click on the "🔎" button to see the operation executed, and then click the results screen to return to the calculator.
+You can also click on the "🔎" button to view past calculations, and then click the screen again to return to the calculator.
 
 ![AllResultsClickButton](https://github.com/nanigalli/calculator-springboot-react/blob/tech-debts/docs/allResultsButton.gif?raw=true)
 
@@ -45,12 +56,16 @@ You can click on the "🔎" button to see the operation executed, and then click
 ```
 2. Unzip last version:
 ```
-   unzip calculator-springboot-react.zip
+   unzip calculator-springboot-react-{lastVersion}.zip
 ```
 3. In separate terminals
 - Run backend engine:
 ```
    java -jar engine-{lastVersion}.jar
+   
+   or:
+   
+   java -DDATASOURCE_DIR="{DATASOURCE_DIR}" engine-{lastVersion}.jar
 ```
 - Run app:
 ```
@@ -86,15 +101,6 @@ Compilation, build and execution
    npm start
 ```
 4. Visit: http://localhost:3000/
-
-## Data source
-Database: H2 (file-based storage)
-
-Settings: check /engine/src/main/resources/application.properties
-
-Access the H2 Console: Run backend engine and visit http://localhost:8080/h2-console
-
-Default location: /tmp/gallidb
 
 ## Tech debts
 - Find a new component to replace "Textfit" from "react-textfit in react App. It is not compatible with React 18
