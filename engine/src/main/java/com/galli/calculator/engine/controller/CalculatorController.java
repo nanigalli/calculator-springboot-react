@@ -25,8 +25,18 @@ public class CalculatorController {
   }
 
   @GetMapping("results")
-  public GetAllResultsResponse getAllResults() {
-    return service.getAllResults();
+  public GetAllResultsResponse getAllResults(
+      @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+      @RequestParam(required = false, defaultValue = "50") Integer pageSize) {
+    if (pageNumber < 0) {
+      throw new EngineIllegalArgumentException("PageNumber must be greater than or equal to 0",
+          "pageNumLessThan0");
+    }
+    if (pageSize < 1) {
+      throw new EngineIllegalArgumentException("PageSize must be greater than 0",
+          "pageSizeLessThan1");
+    }
+    return service.getAllResults(pageNumber, pageSize);
   }
 
   @PostMapping("add")

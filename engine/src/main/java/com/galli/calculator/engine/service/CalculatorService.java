@@ -15,12 +15,20 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CalculatorService {
 
-  private static final int SCALE = 10;
+  private static final Logger LOGGER = LoggerFactory.getLogger(CalculatorService.class);
+
+  private static final int SCALE = 15;
 
   private final ResultRepository repository;
 
@@ -28,8 +36,16 @@ public class CalculatorService {
     this.repository = repository;
   }
 
-  public GetAllResultsResponse getAllResults() {
-    return new GetAllResultsResponse(repository.findAll());
+  public GetAllResultsResponse getAllResults(int pageNumber, int pageSize) {
+    Page<Result> response;
+    try {
+      response = repository.findAll(
+          PageRequest.of(pageNumber, pageSize, Sort.by(Order.desc("executionDate"))));
+    } catch (Throwable e) {
+      LOGGER.error("error_getting_all_results", e);
+      throw e;
+    }
+    return new GetAllResultsResponse(response.getContent(), pageNumber, response.getTotalPages());
   }
 
   public OperationResponse add(BigDecimal leftNumber, BigDecimal rightNumber) {
