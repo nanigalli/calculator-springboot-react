@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,6 +25,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CalculatorService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(CalculatorService.class);
 
   private static final int SCALE = 15;
 
@@ -38,6 +42,7 @@ public class CalculatorService {
       response = repository.findAll(
           PageRequest.of(pageNumber, pageSize, Sort.by(Order.desc("executionDate"))));
     } catch (Throwable e) {
+      LOGGER.error("error_getting_all_results", e);
       throw e;
     }
     return new GetAllResultsResponse(response.getContent(), pageNumber, response.getTotalPages());
