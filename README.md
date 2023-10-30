@@ -9,15 +9,28 @@ A calculator project built with Spring boot and React.
 - Display old results
 
 ## Usage example
+
 ### Mathematical operations
+
+You can enter numbers up to 16 digits (including decimals).
+
 ![MathOperations](https://github.com/nanigalli/calculator-springboot-react/blob/tech-debts/docs/calculator.gif?raw=true)
 
-You can enter numbers up to 16 digits (including decimals)
 
 ### Show executed operation
 **Option 1**
 
+You can click on the calculator screen to see the operation executed, and then click the results screen to return to the calculator.
+
+![AllResultsClickScreen](https://github.com/nanigalli/calculator-springboot-react/blob/tech-debts/docs/allResultsScreen.gif?raw=true)
+
+
 **Option 2**
+
+You can click on the "🔎" button to see the operation executed, and then click the results screen to return to the calculator.
+
+![AllResultsClickButton](https://github.com/nanigalli/calculator-springboot-react/blob/tech-debts/docs/allResultsButton.gif?raw=true)
+
 
 ## Execution
 
@@ -48,6 +61,7 @@ You can enter numbers up to 16 digits (including decimals)
 
 ### Manual 
 Compilation, build and execution
+
 #### Backend
 1. Go to engine folder:
 ```
