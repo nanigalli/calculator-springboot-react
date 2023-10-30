@@ -10,9 +10,12 @@ A calculator project built with Spring boot and React.
 
 ## Usage example
 ### Mathematical operations
+![MathOperations](https://github.com/nanigalli/calculator-springboot-react/blob/tech-debts/docs/calculator.gif?raw=true)
+
+You can enter numbers up to 16 digits (including decimals)
+
 ### Show executed operation
 **Option 1**
-![example](https://github.com/nanigalli/calculator-springboot-react/blob/first-release/app/public/logo192.png?raw=true)
 
 **Option 2**
 
