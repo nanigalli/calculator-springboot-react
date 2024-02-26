@@ -1,0 +1,19 @@
+# Docker Compose file
+version: '3'
+services:
+  calculator-app:
+    image: calculator-app:1.2
+    ports:
+      - "3000:3000"
+    networks:
+      - calculator-net
+  calculator-api:
+    image: calculator-engine:1.0
+    ports:
+      - "8080:8080"
+    networks:
+      - calculator-net
+
+networks:
+  calculator-net:
+    external: true
